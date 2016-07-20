@@ -3,6 +3,7 @@
 # Import the required modules
 import cv2, os
 import numpy as np
+import sys
 from PIL import Image
 
 # For face detection we will use the Haar Cascade provided by OpenCV.
@@ -10,7 +11,7 @@ cascadePath = "haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
 # For face recognition we will the the LBPH Face Recognizer 
-recognizer = cv2.face.createLBPHFaceRecognizer(threshold=50.0)
+recognizer = cv2.face.createLBPHFaceRecognizer(threshold=30.0)
 
 def get_images_and_labels(path):
     # Append all the absolute image paths in a list image_paths
@@ -62,14 +63,86 @@ cv2.destroyAllWindows()
 # Perform the tranining
 recognizer.train(images, np.array(labels))
 
-# recognizer.h
-# START: code for recoganize the image 
-predict_image_pil = Image.open('subject03.sad.gif').convert('L')
-predict_image = np.array(predict_image_pil, 'uint8')
-nbr_predicted=  recognizer.predict(predict_image)
-# nbr_predicted, conf = recognizer.predict(predict_image)
-print "{} is Correctly Recognized with confidence {}", nbr_predicted
-# END: 
+
+def recognizerImg(img):
+    # recognizer.h
+    # START: code for recoganize the image 
+    # predict_image_pil = Image.open('subject05.sad.gif').convert('L')
+    # predict_image = np.array(predict_image_pil, 'uint8')
+    predict_image = img
+    nbr_predicted=  recognizer.predict(predict_image)
+    # nbr_predicted, conf = recognizer.predict(predict_image)
+    print "{} is Correctly Recognized with confidence {}", nbr_predicted
+    # END: 
+    return nbr_predicted
+
+
+
+
+# START: get the image from the web cam
+# recognizerImg()
+
+video_capture = cv2.VideoCapture(0)
+# crop = vis[0:1, 0:1]
+flag =0
+            
+while True:
+    # Capture frame-by-frame
+    ret, frame = video_capture.read()
+
+    gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
+
+    faces = faceCascade.detectMultiScale(
+        gray,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30),
+        flags=cv2.CASCADE_SCALE_IMAGE
+    )
+
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        pt1 = (int(x), int(y))
+        pt2 = (int(x + w), int(y + h))
+        crop = frame[y:y+h, x:x+w]
+        crop = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+        img = np.array(crop, 'uint8')
+        file = "test_image.png"
+        cv2.imwrite(file, crop)
+        frame = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        cv2.waitKey(50)
+        flag = recognizerImg(img)
+
+
+    # if faces:
+    # retval, im = camera.read()
+    # camera_capture = frame
+
+    # file = "test_image.png"
+    # A nice feature of the imwrite method is that it will automatically choose the
+    # correct format based on the file extension you provide. Convenient!
+    # cv2.imwrite(file, camera_capture)
+    
+
+    # print crop
+    # cv2.imshow("crop",crop)
+    # Display the resulting frame
+    cv2.imshow('Video', frame)
+    # cv2.imshow('frame', gray)
+
+
+    if flag > 0:
+        break
+
+# When everything is done, release the capture
+cv2.waitKey(500)
+
+video_capture.release()
+cv2.destroyAllWindows()
+
+
+# END: get the image form the web cam
+
 
 # Append the images with the extension .sad into image_paths
 # image_paths = [os.path.join(path, f) for f in os.listdir(path) if f.endswith('.sad')]
