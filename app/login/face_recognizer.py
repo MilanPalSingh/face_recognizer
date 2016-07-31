@@ -7,7 +7,7 @@ import sys
 from PIL import Image
 
 # For face detection we will use the Haar Cascade provided by OpenCV.
-cascadePath = "haarcascade_frontalface_default.xml"
+cascadePath = "login/haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
 # For face recognition we will the the LBPH Face Recognizer 
@@ -18,6 +18,7 @@ def get_images_and_labels(path):
     # We will not read the image with the .sad extension in the training set
     # Rather, we will use them to test our accuracy of the training
     image_paths = [os.path.join(path, f) for f in os.listdir(path) if not f.endswith('.DS_Store')]
+    # print image_paths
     # images will contains face images
     images = []
     # labels will contains the label that is assigned to the image
@@ -56,7 +57,7 @@ def get_images_and_labels(path):
 
 def init():
     # Path to the Yale Dataset
-    path = './yalefaces'
+    path = 'login/yalefaces'
     # Call the get_images_and_labels function and get the face images and the 
     # corresponding labels
     images, labels = get_images_and_labels(path)
@@ -81,11 +82,13 @@ def recognizerImg(img):
 
 
 
+
 # START: get the image from the web cam
 def startApp():
     # recognizerImg()
-
+    print "app started"
     video_capture = cv2.VideoCapture(0)
+    print "viedo started"
     # crop = vis[0:1, 0:1]
     flag =0
                 
@@ -138,14 +141,11 @@ def startApp():
             break
 
     # When everything is done, release the capture
-    cv2.waitKey(1000)
+    cv2.waitKey(500)
 
     video_capture.release()
     cv2.destroyAllWindows()
     return flag
-
-# exit_code = startApp()
-# sys.exit(exit_code)
 
 
 # END: get the image form the web cam
