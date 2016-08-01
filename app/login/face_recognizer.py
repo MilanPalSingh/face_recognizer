@@ -2,16 +2,23 @@
 
 # Import the required modules
 import cv2, os
+import cStringIO
 import numpy as np
 import sys
 from PIL import Image
+from binascii import a2b_base64
+import base64 
+import re
+import urllib
+
 
 # For face detection we will use the Haar Cascade provided by OpenCV.
 cascadePath = "login/haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
 # For face recognition we will the the LBPH Face Recognizer 
-recognizer = cv2.face.createLBPHFaceRecognizer(threshold=30.0)
+recognizer = cv2.face.createLBPHFaceRecognizer()
+# recognizer = cv2.face.createLBPHFaceRecognizer(threshold=50.0)
 
 def get_images_and_labels(path):
     # Append all the absolute image paths in a list image_paths
@@ -49,7 +56,7 @@ def get_images_and_labels(path):
             # image_pil.save(image_path)
             # image_pil.save(temp_image_path)
             # END: 
-            cv2.waitKey(50)
+            # cv2.waitKey(50)
     # return the images list and labels list
     print labels
     return images, labels
@@ -71,15 +78,76 @@ def init():
 def recognizerImg(img):
     # recognizer.h
     # START: code for recoganize the image 
-    # predict_image_pil = Image.open('subject05.sad.gif').convert('L')
-    # predict_image = np.array(predict_image_pil, 'uint8')
-    predict_image = img
+    predict_image_pil = Image.open('test.png').convert('L')
+    predict_image = np.array(predict_image_pil, 'uint8')
+    # predict_image = img
     nbr_predicted=  recognizer.predict(predict_image)
     # nbr_predicted, conf = recognizer.predict(predict_image)
     print "{} is Correctly Recognized with confidence {}", nbr_predicted
     # END: 
     return nbr_predicted
 
+# START: conver the img from client and feed to recognizerImg()
+def startAppWithImg(imgUri):
+    # data = imgUri
+    # png_recovered = base64.decodestring(data)
+
+    # # binary_data = a2b_base64(data)
+    # fd = open('image1.png', 'wb')
+    # fd.write(png_recovered)
+    # fd.close()
+    # img = a2b_base64(data)
+    url = urllib.unquote(imgUri).decode('utf8')
+    print "START : url submitted "
+    # print url
+    image_data = re.sub('^data:image/.+;base64,', '', url).decode('base64')
+    # print image_data
+    image_pil = Image.open(cStringIO.StringIO(image_data)).convert('L')
+    image_pil.save('test.png')
+    image_pil = cv2.imread("test.png")
+
+    print " END : url submitted "
+    image = np.array(image_pil, 'uint8')
+
+    # pic = cStringIO.StringIO()
+    # image_string = cStringIO.StringIO(base64.b64decode(imgUri)
+    # image = Image.open(image_string)
+    # image.save(pic, image.format, quality = 100)
+    # pic.seek(0)
+
+
+    # Read the image
+    # image = cv2.imread(image_string)
+    # image = cv2.imread('image.png')
+    # gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+
+    # Detect faces in the image
+    faces = faceCascade.detectMultiScale(
+        image,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30),
+        flags = cv2.CASCADE_SCALE_IMAGE
+    )
+
+    # print "Found {0} faces!".format(len(faces))
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        # pt1 = (int(x), int(y))
+        # pt2 = (int(x + w), int(y + h))
+        crop = image_pil[y:y+h, x:x+w]
+        crop = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+        img = np.array(crop, 'uint8')
+        file = "test.png"
+        cv2.imwrite(file, crop)
+        # frame = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
+        # cv2.waitKey(50)
+        flag = recognizerImg(img)
+        print flag
+        # if flag>0:
+            # break
+    return flag
+# END: conver the img from client and feed to recognizerImg()
 
 
 

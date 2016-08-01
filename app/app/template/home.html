@@ -15,7 +15,7 @@
 <div class="container-fluid text-center" style="background-image: url('app/bg.png');">
 	<h1 class="text-success" style="margin-top: 50px; font-size: 80px;">P R O D A</h1>
 	<p class="text-muted " ><b>PRO</b>file <b>D</b>etection and <b>A</b>nalysis</p>
-	<form id="form" action="/submitImg" style="margin-top: 100px" type="post">
+	<form id="form" action="/submit" style="margin-top: 100px" type="post">
 		<input type="hidden" name="img" id="img">
 		<button type="submit" class="btn-lg btn btn-success">Start New Meeting</button>
 	</form>
@@ -31,20 +31,20 @@
 <script language="JavaScript">
     Webcam.attach( '#my_camera' );
     var imgUri;
-    $('form').submit(function(e){
-    	e.preventDefault()
-    	console.log("form submit");
-    	$.post( "/submitImg",{ imgUri: imgUri });
-    	// $(this).submit();
-    	return false;
-    });
+    // $('form').submit(function(e){
+    // 	e.preventDefault()
+    // 	console.log("form submit");
+    // 	$.post( "/submit",{ imgUri: imgUri });
+    // 	// $(this).submit();
+    // 	return false;
+    // });
 
     function take_snapshot() {
     	console.log("take shot");
         Webcam.snap( function(data_uri) {
             document.getElementById('my_result').innerHTML = '<img src="'+data_uri+'"/>';
             imgUri = data_uri;
-            $("#img").val(imgUri);
+            $("#img").val(decodeURIComponent(imgUri));
         } );
     }
 </script>

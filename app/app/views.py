@@ -21,15 +21,25 @@ def home(request):
 
 def profile(request):
     # execfile('login/test.py')
-    #	print a
-    # face_recognizer.startApp()
+    # u = request.GET['user']
+    # print u
     return render_to_response(
     # face_recognizer.init()
     'profile.html',
     { 'user': '3' }
     )# Create your views here.
 
-def submitImg(request, imgUri):
+def submit(request):
+    print "request.img"
+    imgUri = request.GET['img']
     print imgUri
-    return redirect('/profile/')
-    
+    # user = 3
+    user = face_recognizer.startAppWithImg(imgUri)
+    print user
+    return HttpResponseRedirect('/profile/',{'user': user})
+
+
+
+
+
+
