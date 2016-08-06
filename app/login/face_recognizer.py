@@ -17,7 +17,7 @@ cascadePath = "login/haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
 # For face recognition we will the the LBPH Face Recognizer 
-recognizer = cv2.face.createLBPHFaceRecognizer()
+recognizer = cv2.face.createLBPHFaceRecognizer(threshold=30.0)
 # recognizer = cv2.face.createLBPHFaceRecognizer(threshold=50.0)
 
 def get_images_and_labels(path):
@@ -41,7 +41,8 @@ def get_images_and_labels(path):
         # Detect the face in the image
         faces = faceCascade.detectMultiScale(image)
         # If face is detected, append the face to images and the label to labels
-        i=1
+        # i=1
+        print image_path 
         for (x, y, w, h) in faces:
             images.append(image)
             # images.append(image[y: y + h, x: x + w])
@@ -75,12 +76,38 @@ def init():
 
 # init()
 
+def checkImg(imgurl):
+    # print imgurl
+    image_pil = cv2.imread(imgurl)
+
+    image = np.array(image_pil, 'uint8')
+
+    faces = faceCascade.detectMultiScale(
+        image,
+        scaleFactor=1.1,
+        minNeighbors=5,
+        minSize=(30, 30),
+        flags = cv2.CASCADE_SCALE_IMAGE
+    )
+
+    # print "Found {0} faces!".format(len(faces))
+    # Draw a rectangle around the faces
+    for (x, y, w, h) in faces:
+        crop = image_pil[y:y+h, x:x+w]
+        crop = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
+        img = np.array(crop, 'uint8')
+        file = imgurl
+        # cv2.imwrite(file, crop)
+        flag = recognizerImg(img)
+        print flag
+    return flag
+
 def recognizerImg(img):
     # recognizer.h
     # START: code for recoganize the image 
-    predict_image_pil = Image.open('test.png').convert('L')
-    predict_image = np.array(predict_image_pil, 'uint8')
-    # predict_image = img
+    # predict_image_pil = Image.open('test.png').convert('L')
+    # predict_image = np.array(predict_image_pil, 'uint8')
+    predict_image = img
     nbr_predicted=  recognizer.predict(predict_image)
     # nbr_predicted, conf = recognizer.predict(predict_image)
     print "{} is Correctly Recognized with confidence {}", nbr_predicted
