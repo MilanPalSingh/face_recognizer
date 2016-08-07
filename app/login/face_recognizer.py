@@ -17,7 +17,7 @@ cascadePath = "login/haarcascade_frontalface_default.xml"
 faceCascade = cv2.CascadeClassifier(cascadePath)
 
 # For face recognition we will the the LBPH Face Recognizer 
-recognizer = cv2.face.createLBPHFaceRecognizer(threshold=30.0)
+recognizer = cv2.face.createLBPHFaceRecognizer(threshold=60.0)
 # recognizer = cv2.face.createLBPHFaceRecognizer(threshold=50.0)
 
 def get_images_and_labels(path):
@@ -43,21 +43,24 @@ def get_images_and_labels(path):
         # If face is detected, append the face to images and the label to labels
         # i=1
         print image_path 
-        for (x, y, w, h) in faces:
-            images.append(image)
-            # images.append(image[y: y + h, x: x + w])
-            labels.append(nbr)
+        images.append(image)
+        labels.append(nbr)
+
+        # for (x, y, w, h) in faces:
+        #     images.append(image)
+        #     # images.append(image[y: y + h, x: x + w])
+        #     labels.append(nbr)
             
-            # cv2.imshow("Adding faces to traning set...", image[y: y + h, x: x + w])
-            # START: crop image to there faces
-            # i= i+1
-            # temp_image_path = "yalefaces/subject03-" + str(i) +".gif"
-            # cv2.imshow("Adding faces to traning set...", image)
-            # image_pil =image_pil.crop((x, y, x+w, y + h))
-            # image_pil.save(image_path)
-            # image_pil.save(temp_image_path)
-            # END: 
-            # cv2.waitKey(50)
+        #     # cv2.imshow("Adding faces to traning set...", image[y: y + h, x: x + w])
+        #     # START: crop image to there faces
+        #     # i= i+1
+        #     # temp_image_path = "yalefaces/subject03-" + str(i) +".gif"
+        #     # cv2.imshow("Adding faces to traning set...", image)
+        #     image_pil =image_pil.crop((x, y, x+w, y + h))
+        #     image_pil.save(image_path)
+        #     # image_pil.save(temp_image_path)
+        #     # END: 
+        #     # cv2.waitKey(50)
     # return the images list and labels list
     print labels
     return images, labels

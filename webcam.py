@@ -38,7 +38,7 @@ while True:
         pt2 = (int(x + w), int(y + h))
         crop = frame[y:y+h, x:x+w]
         crop = cv2.cvtColor(crop, cv2.COLOR_BGR2GRAY)
-        file = "test_image.png"
+        file = "subject03.sad.png"
         cv2.imwrite(file, crop)
         frame = cv2.rectangle(frame, (x, y), (x+w, y+h), (0, 255, 0), 2)
 
