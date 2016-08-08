@@ -28,5 +28,6 @@ urlpatterns = [
     url(r'^submit/', 'app.views.submit', name='submit'),
     url(r'^auth/', 'app.views.auth', name='auth'),
     url(r'^admin/', admin.site.urls),
+    url(r'^music/', include('music.urls')),
     # url(r'', include('login.urls')),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

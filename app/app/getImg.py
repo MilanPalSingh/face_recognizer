@@ -59,8 +59,28 @@ def saveImg(url,filename):
 	urllib.urlretrieve(url, filename)
 	print filename
 
+class Student(object):
+    id = ""
+    name = ""
+    imgUrl = ""
 
+    # The class "constructor" - It's actually an initializer 
+    def __init__(self, id, name, imgUrl):
+        self.id = id
+        self.name = name
+        self.imgUrl = imgUrl
 
+# def make_student(name, age, major):
+#     student = Student(name, age, major)
+#     return student
+
+def getInfo(id):
+    imgUrl = "https://sjsu.instructure.com/images/users/"+ str(id)+"?access_token="+acessToken
+    url = "https://sjsu.instructure.com/api/v1/courses/1204953/users/"+str(id) +"?access_token="+acessToken 
+    name = requests.get(url);
+    s = Student(id ,name.content, imgUrl)
+    print s.imgUrl
+    return s
 
 
 

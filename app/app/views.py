@@ -14,24 +14,103 @@ import urllib
 from app import getImg
 import thread
 
-# filename: path of the img, id: canvasID, user: faceRegSystemID
-def matchID(filename, id , user ):
-    flage  = face_recognizer.checkImg(filename)
-    # if flag == 3:
-    print filename +" - "+ str(flage) 
+canvasID = 0
+
+import threading
+import time
+
+class myThread (threading.Thread):
+    def __init__(self, filename, id , user ):
+        threading.Thread.__init__(self)
+        # flage  = face_recognizer.checkImg(filename)
+        # print filename +" - "+ str(flage) 
+        # if flage == user:
+        # canvasID = id
+        # redirectToProfile(id, user)
+        self.flage = -1
+        self.filename = filename
+        self.id = id
+        self.user = user
+    def run(self):
+        self.flage  = face_recognizer.checkImg(self.filename)
+        print self.filename + ' - ' + str(self.id) + ' - ' + str(self.user) + ' - ' + str(self.flage)
+        if self.flage == self.user:
+            global canvasID
+            canvasID = self.id
+            print "change canvas ID to " + str(self.id)
+            # redirectToProfile(id, user)
+        # Get lock to synchronize threads
+        # threadLock.acquire()
+        # print_time(self.name, self.counter, 3)
+        # Free lock to release next thread
+        # threadLock.release()
+
+
+
+# threadLock = threading.Lock()
+# threads = []
+
+# # Create new threads
+# thread1 = myThread(1, "Thread-1", 1)
+# thread2 = myThread(2, "Thread-2", 2)
+
+# # Start new Threads
+# thread1.start()
+# thread2.start()
+
+# # Add threads to thread list
+# threads.append(thread1)
+# threads.append(thread2)
+
+# # Wait for all threads to complete
+# for t in threads:
+#     t.join()
+# print "Exiting Main Thread"
+
+
+# def redirectToProfile(id, user):
+#     return HttpResponseRedirect('/music/' + str(user) + '/?cID='+ str(id))
+
+
+
+# # filename: path of the img, id: canvasID, user: faceRegSystemID
+# def matchID(filename, id , user ):
+#     flage  = face_recognizer.checkImg(filename)
+#     print filename +" - "+ str(flage) 
+#     if flage == user:
+#         canvasID = id
+#         redirectToProfile(id, user)
+
 
 def getUserID(data, user):
     print len(data)
     itercars = iter(data)
     next(itercars)
     next(itercars)
+    threadLock = threading.Lock()
+    threads = []
     for s in itercars:
         # i=i+1
         id = str(s['id'])
         # id = s['name']+'-'+id
         filename = "temp/"+id+".png"
         # print filename
-        thread.start_new_thread( matchID, (filename, id , user) )
+        # Create new threads
+        thread = myThread(filename, id , user)
+        # thread2 = myThread(2, "Thread-2", 2)
+        # Start new Threads
+        # thread.start()
+        thread.start()
+        # Add threads to thread list
+        threads.append(thread)
+        # threads.append(thread2)
+        # thread.start_new_thread( matchID, (filename, id , user) )
+    # Wait for all threads to complete
+    for t in threads:
+        t.join()
+    print "Exiting Main Thread"
+    print "after threads:- " + str(canvasID)
+    return canvasID
 
 # @login_required
 def home(request):
@@ -62,7 +141,8 @@ def submit(request):
     user = face_recognizer.startAppWithImg(imgUri)
     print user
     ID = getUserID(r,user)
-    return HttpResponseRedirect('/profile/?user='+ str(user))
+    # return HttpResponseRedirect('/music/' + str(user) + '/', {'cID': str(ID)} )
+    return HttpResponseRedirect('/music/' + str(user) + '/?cID='+str(ID))
 
 def auth(request):
     # execfile('login/test.py')
