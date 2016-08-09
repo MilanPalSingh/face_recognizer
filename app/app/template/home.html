@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Home</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
 	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
 
 	<!-- Optional theme -->
@@ -19,9 +20,19 @@
 		<input type="hidden" name="img" id="img">
 		<button type="submit" class="btn-lg btn btn-success">Start New Meeting</button>
 	</form>
-    <div id="my_camera" style="width:320px; height:240px;"></div>
-    <div id="my_result"></div>
-    <a href="javascript:void(take_snapshot())">Take Snapshot</a>
+    <div class="row">
+    <div class="col-md-6 text-center">
+        <div style="margin: 0 auto;width:320px;">
+        <div id="my_camera" style="width:320px; height:240px;"></div>
+        </div>
+    </div>
+    <div class="col-md-6 text-center">
+        <div style="margin: 0 auto; width: 320px;">
+        <div id="my_result"></div>
+        <a href="javascript:void(take_snapshot())">Take Snapshot</a>
+        </div>
+    </div>
+    </div>
 
 </div>
     
@@ -32,7 +43,11 @@
 <script language="JavaScript">
     Webcam.attach( '#my_camera' );
     var imgUri;
-    // $('form').submit(function(e){
+    $('form').submit(function(e){
+        // e.preventDefault()
+        take_snapshot();
+        // $(this).submit();
+    });
     // 	e.preventDefault()
     // 	console.log("form submit");
     // 	$.post( "/submit",{ imgUri: imgUri });
